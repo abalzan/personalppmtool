@@ -6,6 +6,8 @@ import com.andrei.ppmtool.ppmtool.model.Project;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Log4j2
 @Service
 public class ProjectService {
@@ -24,6 +26,14 @@ public class ProjectService {
             log.error(e);
             throw new ProjectIdException("Project Id: " + project.getProjectIdentifier().toUpperCase() + " already exists");
         }
+
+    }
+
+    public Project findProjectByIdentifier(String projectIdentifier) {
+
+        return Optional
+                .ofNullable(projectRepository.findByProjectIdentifier(projectIdentifier.toUpperCase()))
+                .orElseThrow(() -> new ProjectIdException("Project Id " + projectIdentifier.toUpperCase() + " not found!"));
 
     }
 }
