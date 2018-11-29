@@ -36,4 +36,14 @@ public class ProjectService {
                 .orElseThrow(() -> new ProjectIdException("Project Id " + projectIdentifier.toUpperCase() + " not found!"));
 
     }
+
+    public Iterable<Project> findAllProjects() {
+        return projectRepository.findAll();
+    }
+
+    public void deleteByProjectIdentier(String projectIdentifier) {
+
+        projectRepository.delete(this.findProjectByIdentifier(projectIdentifier));
+
+    }
 }
