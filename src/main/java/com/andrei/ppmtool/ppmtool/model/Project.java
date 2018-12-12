@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -39,14 +40,17 @@ public class Project {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate endDate;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+    private Backlog backlog;
+
     @CreatedDate
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(updatable = false)
-    private LocalDate createDate;
+    private Date createDate;
 
     @LastModifiedDate
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate updateDate;
+    private Date updateDate;
 
 
 }
