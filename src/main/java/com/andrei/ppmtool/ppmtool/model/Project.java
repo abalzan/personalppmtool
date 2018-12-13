@@ -1,6 +1,7 @@
 package com.andrei.ppmtool.ppmtool.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,6 +42,7 @@ public class Project {
     private LocalDate endDate;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+    @JsonIgnore
     private Backlog backlog;
 
     @CreatedDate

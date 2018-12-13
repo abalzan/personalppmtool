@@ -40,4 +40,10 @@ public class ProjectTaskService {
 
         return projectTaskRepository.save(projectTask);
     }
+
+    public Iterable<ProjectTask> findBackLogById(String backlogId) {
+
+        return projectTaskRepository.findByProjectIdentifierOrderByPriority(backlogId);
+
+    }
 }
