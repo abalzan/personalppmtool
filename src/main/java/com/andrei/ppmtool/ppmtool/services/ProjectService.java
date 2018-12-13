@@ -27,13 +27,13 @@ public class ProjectService {
             String projectIdentifier = project.getProjectIdentifier().toUpperCase();
             project.setProjectIdentifier(projectIdentifier);
 
-            if (project.getId() == null) {
+            if (project.getId() == 0) {
                 Backlog backlog = new Backlog();
                 project.setBacklog(backlog);
                 backlog.setProject(project);
                 backlog.setProjectIdentifier(projectIdentifier);
             }
-            if (project.getId() != null) {
+            if (project.getId() > 0) {
                 project.setBacklog(backlogRepository.findByProjectIdentifier(projectIdentifier));
             }
 

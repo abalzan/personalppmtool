@@ -1,5 +1,6 @@
 package com.andrei.ppmtool.ppmtool.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,22 +15,27 @@ public class ProjectTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(updatable = false)
     private String projectSequence;
 
-    @NotNull(message = "please include a project summaty")
+    @NotNull(message = "please include a project summary")
     private String summary;
 
     private String acceptanceCriteria;
 
     private String status;
 
-    private Integer priority;
+    private int priority;
 
     @Column(updatable = false)
     private String projectIdentifier;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "backlog_id", updatable = false, nullable = false)
+    @JsonIgnore
+    private Backlog backlog;
 
     private Date createAt;
 
