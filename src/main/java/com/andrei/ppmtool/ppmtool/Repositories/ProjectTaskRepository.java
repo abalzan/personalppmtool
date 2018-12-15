@@ -11,6 +11,4 @@ public interface ProjectTaskRepository extends JpaRepository<ProjectTask, Long> 
 
     ProjectTask findByProjectSequence(String projectSequence);
 
-    ProjectTask findByProjectSequenceAndByBacklo(String projectSequence);
-
 }

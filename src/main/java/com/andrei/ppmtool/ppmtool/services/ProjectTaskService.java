@@ -80,4 +80,18 @@ public class ProjectTaskService {
         return projectTaskRepository.findByProjectSequence(projectTaskId);
     }
 
+
+    public ProjectTask updateByProjectSequence(ProjectTask updatedProjectTask, String backlogId, String projectTaskId) {
+
+        findProjectTaskByProjectSequence(backlogId, projectTaskId);
+
+        return projectTaskRepository.save(updatedProjectTask);
+    }
+
+    public void deleteProjectTaskByProjectSequence(String backlogId, String projectTaskId) {
+        ProjectTask projectTaskByProjectSequence = findProjectTaskByProjectSequence(backlogId, projectTaskId);
+
+        projectTaskRepository.delete(projectTaskByProjectSequence);
+
+    }
 }
