@@ -8,4 +8,9 @@ import java.util.List;
 public interface ProjectTaskRepository extends JpaRepository<ProjectTask, Long> {
 
     List<ProjectTask> findByProjectIdentifierOrderByPriority(String backlogId);
+
+    ProjectTask findByProjectSequence(String projectSequence);
+
+    ProjectTask findByProjectSequenceAndByBacklo(String projectSequence);
+
 }

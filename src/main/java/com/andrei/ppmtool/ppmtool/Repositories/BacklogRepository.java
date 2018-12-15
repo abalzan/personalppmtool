@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BacklogRepository extends JpaRepository<Backlog, Long> {
 
-    Backlog findByProjectIdentifier(String identifiet);
+    Backlog findByProjectIdentifier(String identifier);
 
 
 }
