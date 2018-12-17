@@ -29,6 +29,8 @@ public class ProjectTask {
 
     private int priority;
 
+    private Date dueDate;
+
     @Column(updatable = false)
     private String projectIdentifier;
 
