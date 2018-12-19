@@ -11,11 +11,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Entity
-public class ProjectTask {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class ProjectTask extends BaseEntity {
 
     @Column(updatable = false, unique = true)
     private String projectSequence;
@@ -38,9 +34,5 @@ public class ProjectTask {
     @JoinColumn(name = "backlog_id", updatable = false, nullable = false)
     @JsonIgnore
     private Backlog backlog;
-
-    private Date createAt;
-
-    private Date updateAt;
 
 }
