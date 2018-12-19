@@ -3,6 +3,7 @@ package com.andrei.ppmtool.ppmtool.controllers;
 import com.andrei.ppmtool.ppmtool.model.User;
 import com.andrei.ppmtool.ppmtool.services.UserService;
 import com.andrei.ppmtool.ppmtool.services.ValidationErrorService;
+import com.andrei.ppmtool.ppmtool.validators.UserValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -21,13 +22,18 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(ValidationErrorService validationErrorService, UserService userService) {
+    private final UserValidator userValidator;
+
+    public UserController(ValidationErrorService validationErrorService, UserService userService, UserValidator userValidator) {
         this.validationErrorService = validationErrorService;
         this.userService = userService;
+        this.userValidator = userValidator;
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) {
+
+        userValidator.validate(user, result);
 
         ResponseEntity<?> errorMap = validationErrorService.validationErrorService(result);
         if (errorMap != null) return errorMap;
