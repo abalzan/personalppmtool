@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -26,7 +25,9 @@ public class ProjectTaskService {
     public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask) {
 
         try {
-            Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier);
+            Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier)
+                    .orElseThrow(() -> new ProjectNotFoundException("Project with Id " + projectIdentifier + " not found!"));
+
             projectTask.setBacklog(backlog);
 
             int backLogSequence = backlog.getPTSequence();
@@ -65,19 +66,17 @@ public class ProjectTaskService {
 
     public ProjectTask findProjectTaskByProjectSequence(String backlogId, String projectTaskId) {
 
-        Optional
-                .ofNullable(backlogRepository.findByProjectIdentifier(backlogId))
+        backlogRepository.findByProjectIdentifier(backlogId)
                 .orElseThrow(() -> new ProjectNotFoundException("Project with Id " + backlogId + " not found!"));
 
-        ProjectTask projectTask = Optional
-                .ofNullable(projectTaskRepository.findByProjectSequence(projectTaskId))
+        ProjectTask projectTask = projectTaskRepository.findByProjectSequence(projectTaskId)
                 .orElseThrow(() -> new ProjectNotFoundException("Project Task " + projectTaskId + " not found!"));
 
         if (!projectTask.getProjectIdentifier().equals(backlogId)) {
             throw new ProjectNotFoundException("Project Task " + projectTaskId + " does not exist in project!");
         }
 
-        return projectTaskRepository.findByProjectSequence(projectTaskId);
+        return projectTask;
     }
 
 
