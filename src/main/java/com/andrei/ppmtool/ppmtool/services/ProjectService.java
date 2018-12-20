@@ -3,6 +3,7 @@ package com.andrei.ppmtool.ppmtool.services;
 import com.andrei.ppmtool.ppmtool.Repositories.BacklogRepository;
 import com.andrei.ppmtool.ppmtool.Repositories.ProjectRepository;
 import com.andrei.ppmtool.ppmtool.exceptions.ProjectIdException;
+import com.andrei.ppmtool.ppmtool.exceptions.ProjectNotFoundException;
 import com.andrei.ppmtool.ppmtool.model.Backlog;
 import com.andrei.ppmtool.ppmtool.model.Project;
 import lombok.extern.log4j.Log4j2;
@@ -34,7 +35,8 @@ public class ProjectService {
                 backlog.setProjectIdentifier(projectIdentifier);
             }
             if (project.getId() > 0) {
-                project.setBacklog(backlogRepository.findByProjectIdentifier(projectIdentifier));
+                project.setBacklog(backlogRepository.findByProjectIdentifier(projectIdentifier)
+                        .orElseThrow(() -> new ProjectNotFoundException("Project with Id " + projectIdentifier + " not found!")));
             }
 
             return projectRepository.save(project);
@@ -57,7 +59,7 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public void deleteByProjectIdentier(String projectIdentifier) {
+    public void deleteByProjectIdentifier(String projectIdentifier) {
 
         projectRepository.delete(this.findProjectByIdentifier(projectIdentifier));
 
