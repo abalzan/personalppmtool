@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,15 +23,24 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final JWTTokenProvider jwtTokenProvider;
     private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final CustomUserDetailService customUserDetailService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public SecurityConfig(JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint, CustomUserDetailService customUserDetailService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public SecurityConfig(JWTTokenProvider jwtTokenProvider, JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint, CustomUserDetailService customUserDetailService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.jwtTokenProvider = jwtTokenProvider;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.customUserDetailService = customUserDetailService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
+
+
+    @Bean
+    public JWTAuthenticationFilter authenticationFilter() {
+        return new JWTAuthenticationFilter(jwtTokenProvider, customUserDetailService);
+    }
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -69,5 +79,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(SecurityConstants.H2_URL).permitAll()
                 .anyRequest().authenticated();
 
+        http.addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }
