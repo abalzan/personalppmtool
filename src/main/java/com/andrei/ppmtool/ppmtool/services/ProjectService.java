@@ -27,11 +27,15 @@ public class ProjectService {
         this.backlogRepository = backlogRepository;
     }
 
-    public Project saveOrUpdate(Project project, String username) {
-        try {
+    public Project saveOrUpdate(Project project, String projectLeader) {
 
+        if (project.getId() > 0) {
+            findUserProject(project.getProjectIdentifier(), projectLeader);
+        }
+
+        try {
             String projectIdentifier = project.getProjectIdentifier().toUpperCase();
-            User user = userRepository.findByUsername(username).orElse(null);
+            User user = userRepository.findByUsername(projectLeader).orElse(null);
 
             project.setUser(user);
             project.setProjectLeader(user.getUsername());
@@ -61,7 +65,8 @@ public class ProjectService {
         return Optional
                 .ofNullable(
                         projectRepository.findByProjectIdentifierAndProjectLeader(projectIdentifier.toUpperCase(), projectLeader))
-                .orElseThrow(() -> new ProjectIdException("Project Id " + projectIdentifier.toUpperCase() + " not found!"));
+                .orElseThrow(
+                        () -> new ProjectIdException("Project Id " + projectIdentifier.toUpperCase() + " not found for your user!"));
     }
 
     public Iterable<Project> findAllUserProjects(String projectLeader) {
