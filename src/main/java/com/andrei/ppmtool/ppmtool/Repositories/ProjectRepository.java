@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    Project findByProjectIdentifier(String projectIdentifier);
+    Project findByProjectIdentifierAndProjectLeader(String projectIdentifier, String projectLeader);
 
     List<Project> findAllByProjectLeader(String projectLeader);
 

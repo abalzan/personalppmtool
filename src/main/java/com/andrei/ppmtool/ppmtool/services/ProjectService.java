@@ -56,21 +56,21 @@ public class ProjectService {
 
     }
 
-    public Project findProjectByIdentifier(String projectIdentifier) {
+    public Project findUserProject(String projectIdentifier, String projectLeader) {
 
         return Optional
-                .ofNullable(projectRepository.findByProjectIdentifier(projectIdentifier.toUpperCase()))
+                .ofNullable(
+                        projectRepository.findByProjectIdentifierAndProjectLeader(projectIdentifier.toUpperCase(), projectLeader))
                 .orElseThrow(() -> new ProjectIdException("Project Id " + projectIdentifier.toUpperCase() + " not found!"));
-
     }
 
-    public Iterable<Project> findAllProjects(String projectLeader) {
+    public Iterable<Project> findAllUserProjects(String projectLeader) {
         return projectRepository.findAllByProjectLeader(projectLeader);
     }
 
-    public void deleteByProjectIdentifier(String projectIdentifier) {
+    public void deleteUserProject(String projectIdentifier, String projectLeader) {
 
-        projectRepository.delete(this.findProjectByIdentifier(projectIdentifier));
+        projectRepository.delete(this.findUserProject(projectIdentifier, projectLeader));
 
     }
 }
