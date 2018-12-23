@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @CrossOrigin
 @RestController
@@ -24,13 +25,13 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result) {
+    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result, Principal principal) {
 
         ResponseEntity<?> responseEntity = validationErrorService.validationErrorService(result);
 
         if (responseEntity != null) return responseEntity;
 
-        projectService.saveOrUpdate(project);
+        projectService.saveOrUpdate(project, principal.getName());
         return new ResponseEntity<>(project, HttpStatus.CREATED);
     }
 
@@ -42,8 +43,8 @@ public class ProjectController {
     }
 
     @GetMapping("/all")
-    public Iterable<Project> getAllProjects() {
-        return projectService.findAllProjects();
+    public Iterable<Project> getAllProjects(Principal principal) {
+        return projectService.findAllProjects(principal.getName());
     }
 
     @DeleteMapping("/{projectIdentifier}")
