@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/backlog")
@@ -24,20 +25,20 @@ public class BacklogController {
     }
 
     @PostMapping("/{backlogId}")
-    public ResponseEntity<?> addProjectTaskBacklog(@Valid @RequestBody ProjectTask projectTask, BindingResult result, @PathVariable String backlogId) {
-
+    public ResponseEntity<?> addProjectTaskBacklog(@Valid @RequestBody ProjectTask projectTask, BindingResult result,
+                                                   @PathVariable String backlogId, Principal principal) {
         ResponseEntity<?> errorMap = validationErrorService.validationErrorService(result);
 
         if (errorMap != null) return errorMap;
 
-        ProjectTask projectTask1 = projectTaskService.addProjectTask(backlogId, projectTask);
+        ProjectTask projectTask1 = projectTaskService.addProjectTask(backlogId, projectTask, principal.getName());
 
         return new ResponseEntity<>(projectTask1, HttpStatus.CREATED);
     }
 
     @GetMapping("/{backlogId}")
-    public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlogId) {
-        return projectTaskService.findBackLogById(backlogId);
+    public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlogId, Principal principal) {
+        return projectTaskService.findBackLogById(backlogId, principal.getName());
     }
 
     @GetMapping("/{backlogId}/{projectTaskId}")
@@ -49,7 +50,8 @@ public class BacklogController {
     }
 
     @PatchMapping("/{backlogId}/{projectTaskId}")
-    public ResponseEntity<?> updateProjectTask(@Valid @RequestBody ProjectTask updatedProjectTask, BindingResult result, @PathVariable String backlogId, @PathVariable String projectTaskId) {
+    public ResponseEntity<?> updateProjectTask(@Valid @RequestBody ProjectTask updatedProjectTask, BindingResult result,
+                                               @PathVariable String backlogId, @PathVariable String projectTaskId) {
 
         ResponseEntity<?> errorMap = validationErrorService.validationErrorService(result);
 

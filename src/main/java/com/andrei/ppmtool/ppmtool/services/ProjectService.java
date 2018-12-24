@@ -30,7 +30,7 @@ public class ProjectService {
     public Project saveOrUpdate(Project project, String projectLeader) {
 
         if (project.getId() > 0) {
-            findUserProject(project.getProjectIdentifier(), projectLeader);
+            findUserProjectIdentifier(project.getProjectIdentifier(), projectLeader);
         }
 
         try {
@@ -60,7 +60,7 @@ public class ProjectService {
 
     }
 
-    public Project findUserProject(String projectIdentifier, String projectLeader) {
+    public Project findUserProjectIdentifier(String projectIdentifier, String projectLeader) {
 
         return Optional
                 .ofNullable(
@@ -75,7 +75,7 @@ public class ProjectService {
 
     public void deleteUserProject(String projectIdentifier, String projectLeader) {
 
-        projectRepository.delete(this.findUserProject(projectIdentifier, projectLeader));
+        projectRepository.delete(this.findUserProjectIdentifier(projectIdentifier, projectLeader));
 
     }
 }

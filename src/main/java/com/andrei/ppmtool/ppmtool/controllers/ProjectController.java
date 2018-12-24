@@ -38,7 +38,7 @@ public class ProjectController {
     @GetMapping("/{projectIdentifier}")
     public ResponseEntity<?> getProjectByIdentifier(@PathVariable String projectIdentifier, Principal principal) {
 
-        Project project = projectService.findUserProject(projectIdentifier, principal.getName());
+        Project project = projectService.findUserProjectIdentifier(projectIdentifier, principal.getName());
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
