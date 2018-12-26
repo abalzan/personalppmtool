@@ -17,7 +17,8 @@ public class UserValidator implements Validator {
 
         User user = (User) object;
 
-        if (user.getPassword().length() < 8) {
+        //if user is null or empty we are alredy getting an exception if we get another exception with the same field it throw an Duplicate Key Password exception
+        if (!user.getPassword().isEmpty() && user.getPassword().length() < 8) {
             errors.rejectValue("password", "Length", "Password must be at least 8 characters");
         }
         if (!user.getPassword().equals(user.getConfirmPassword())) {

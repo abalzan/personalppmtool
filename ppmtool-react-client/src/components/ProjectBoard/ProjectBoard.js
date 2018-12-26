@@ -6,7 +6,6 @@ import PropTypes from "prop-types";
 import { getBacklog } from "../../actions/backlogActions";
 
 class ProjectBoard extends Component {
-  //construct
   constructor() {
     super();
     this.state = {
