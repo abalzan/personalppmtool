@@ -37,9 +37,6 @@ class Backlog extends Component {
               </div>
             </div>
             {todoItems}
-            {
-              //insert Taks HERE
-            }
           </div>
           <div className="col-md-4">
             <div className="card text-center mb-2">
@@ -48,10 +45,6 @@ class Backlog extends Component {
               </div>
             </div>
             {inProgressItems}
-            {
-              //  <!-- SAMPLE PROJECT TASK STARTS HERE -->
-              //         <!-- SAMPLE PROJECT TASK ENDS HERE -->
-            }
           </div>
           <div className="col-md-4">
             <div className="card text-center mb-2">
@@ -60,10 +53,6 @@ class Backlog extends Component {
               </div>
             </div>
             {doneItems}
-            {
-              // <!-- SAMPLE PROJECT TASK STARTS HERE -->
-              // <!-- SAMPLE PROJECT TASK ENDS HERE -->
-            }
           </div>
         </div>
       </div>

@@ -5,24 +5,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-public class Project {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class Project extends BaseEntity {
 
     @NotBlank(message = "Project Name is Required")
     private String projectName;
@@ -45,14 +38,9 @@ public class Project {
     @JsonIgnore
     private Backlog backlog;
 
-    @CreatedDate
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    @Column(updatable = false)
-    private Date createDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User user;
 
-    @LastModifiedDate
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    private Date updateDate;
-
-
+    private String projectLeader;
 }
