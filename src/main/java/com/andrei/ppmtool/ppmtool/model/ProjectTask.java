@@ -1,5 +1,6 @@
 package com.andrei.ppmtool.ppmtool.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class ProjectTask extends BaseEntity {
 
     private int priority;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date dueDate;
 
     @Column(updatable = false)
