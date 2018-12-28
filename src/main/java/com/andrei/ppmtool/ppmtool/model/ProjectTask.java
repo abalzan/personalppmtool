@@ -1,5 +1,6 @@
 package com.andrei.ppmtool.ppmtool.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,11 +12,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Entity
-public class ProjectTask {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class ProjectTask extends BaseEntity {
 
     @Column(updatable = false, unique = true)
     private String projectSequence;
@@ -29,6 +26,7 @@ public class ProjectTask {
 
     private int priority;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date dueDate;
 
     @Column(updatable = false)
@@ -38,9 +36,5 @@ public class ProjectTask {
     @JoinColumn(name = "backlog_id", updatable = false, nullable = false)
     @JsonIgnore
     private Backlog backlog;
-
-    private Date createAt;
-
-    private Date updateAt;
 
 }

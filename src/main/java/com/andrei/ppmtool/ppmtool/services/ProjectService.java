@@ -2,9 +2,12 @@ package com.andrei.ppmtool.ppmtool.services;
 
 import com.andrei.ppmtool.ppmtool.Repositories.BacklogRepository;
 import com.andrei.ppmtool.ppmtool.Repositories.ProjectRepository;
+import com.andrei.ppmtool.ppmtool.Repositories.UserRepository;
 import com.andrei.ppmtool.ppmtool.exceptions.ProjectIdException;
+import com.andrei.ppmtool.ppmtool.exceptions.ProjectNotFoundException;
 import com.andrei.ppmtool.ppmtool.model.Backlog;
 import com.andrei.ppmtool.ppmtool.model.Project;
+import com.andrei.ppmtool.ppmtool.model.User;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -14,17 +17,28 @@ import java.util.Optional;
 @Service
 public class ProjectService {
 
+    private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final BacklogRepository backlogRepository;
 
-    public ProjectService(ProjectRepository projectRepository, BacklogRepository backlogRepository) {
+    public ProjectService(UserRepository userRepository, ProjectRepository projectRepository, BacklogRepository backlogRepository) {
+        this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.backlogRepository = backlogRepository;
     }
 
-    public Project saveOrUpdate(Project project) {
+    public Project saveOrUpdate(Project project, String projectLeader) {
+
+        if (project.getId() > 0) {
+            findUserProjectIdentifier(project.getProjectIdentifier(), projectLeader);
+        }
+
         try {
             String projectIdentifier = project.getProjectIdentifier().toUpperCase();
+            User user = userRepository.findByUsername(projectLeader).orElse(null);
+
+            project.setUser(user);
+            project.setProjectLeader(user.getUsername());
             project.setProjectIdentifier(projectIdentifier);
 
             if (project.getId() == 0) {
@@ -34,7 +48,8 @@ public class ProjectService {
                 backlog.setProjectIdentifier(projectIdentifier);
             }
             if (project.getId() > 0) {
-                project.setBacklog(backlogRepository.findByProjectIdentifier(projectIdentifier));
+                project.setBacklog(backlogRepository.findByProjectIdentifier(projectIdentifier)
+                        .orElseThrow(() -> new ProjectNotFoundException("Project with Id " + projectIdentifier + " not found!")));
             }
 
             return projectRepository.save(project);
@@ -45,21 +60,22 @@ public class ProjectService {
 
     }
 
-    public Project findProjectByIdentifier(String projectIdentifier) {
+    public Project findUserProjectIdentifier(String projectIdentifier, String projectLeader) {
 
         return Optional
-                .ofNullable(projectRepository.findByProjectIdentifier(projectIdentifier.toUpperCase()))
-                .orElseThrow(() -> new ProjectIdException("Project Id " + projectIdentifier.toUpperCase() + " not found!"));
-
+                .ofNullable(
+                        projectRepository.findByProjectIdentifierAndProjectLeader(projectIdentifier.toUpperCase(), projectLeader))
+                .orElseThrow(
+                        () -> new ProjectIdException("Project Id " + projectIdentifier.toUpperCase() + " not found for your user!"));
     }
 
-    public Iterable<Project> findAllProjects() {
-        return projectRepository.findAll();
+    public Iterable<Project> findAllUserProjects(String projectLeader) {
+        return projectRepository.findAllByProjectLeader(projectLeader);
     }
 
-    public void deleteByProjectIdentier(String projectIdentifier) {
+    public void deleteUserProject(String projectIdentifier, String projectLeader) {
 
-        projectRepository.delete(this.findProjectByIdentifier(projectIdentifier));
+        projectRepository.delete(this.findUserProjectIdentifier(projectIdentifier, projectLeader));
 
     }
 }
