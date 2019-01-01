@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -43,7 +44,7 @@ public class ProjectController {
     }
 
     @GetMapping("/all")
-    public Iterable<Project> getAllProjects(Principal principal) {
+    public List<Project> getAllProjects(Principal principal) {
         return projectService.findAllUserProjects(principal.getName());
     }
 

@@ -11,6 +11,7 @@ import com.andrei.ppmtool.ppmtool.model.User;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Log4j2
@@ -69,7 +70,7 @@ public class ProjectService {
                         () -> new ProjectIdException("Project Id " + projectIdentifier.toUpperCase() + " not found for your user!"));
     }
 
-    public Iterable<Project> findAllUserProjects(String projectLeader) {
+    public List<Project> findAllUserProjects(String projectLeader) {
         return projectRepository.findAllByProjectLeader(projectLeader);
     }
 
