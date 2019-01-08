@@ -1,18 +1,20 @@
 package com.andrei.ppmtool.ppmtool.controllers;
 
+import com.andrei.ppmtool.ppmtool.BaseTestContext;
 import com.andrei.ppmtool.ppmtool.model.Project;
 import com.andrei.ppmtool.ppmtool.services.ProjectService;
 import com.andrei.ppmtool.ppmtool.services.ValidationErrorService;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.security.Principal;
@@ -25,43 +27,61 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ProjectControllerTest {
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class ProjectControllerTest extends BaseTestContext {
 
-    @Mock
+    @MockBean
     private ProjectService projectService;
 
-    @Mock
+    @MockBean
     private ValidationErrorService validationErrorService;
 
     private ProjectController controller;
 
-    private MockMvc mockMvc;
+    private Principal mockPrincipal;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         controller = new ProjectController(projectService, validationErrorService);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .build();
+
+        mockPrincipal = Mockito.mock(Principal.class);
+        Mockito.when(mockPrincipal.getName()).thenReturn("me");
+    }
+
+    @Test
+    public void createNewProject() throws Exception {
+        Mockito.when(validationErrorService.validationErrorService(Mockito.any())).thenReturn(null);
+
+        Mockito.when(projectService.saveOrUpdate(Mockito.any(Project.class), Mockito.anyString())).thenReturn(createProjects().get(0));
+
+        mockMvc.perform(post("/api/project")
+                .principal(mockPrincipal)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"projectName\": \"new proje\", \"projectIdentifier\": \"PRJ12\", \"description\": \"desc\"}")
+        ).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.projectName", Matchers.is("new proje")))
+                .andExpect(jsonPath("$.projectIdentifier", Matchers.is("PRJ12")))
+                .andExpect(jsonPath("$.description", Matchers.is("desc")));
     }
 
 
     @Test
     public void getProjectByIdentifier() throws Exception {
-
-        Principal mockPrincipal = Mockito.mock(Principal.class);
-        Mockito.when(mockPrincipal.getName()).thenReturn("me");
         Mockito.when(projectService.findUserProjectIdentifier(Mockito.anyString(), Mockito.anyString())).thenReturn(createProjects().get(0));
 
-        RequestBuilder requestBuilder = get("/api/project/1")
+        MockHttpServletResponse response = mockMvc.perform(get("/api/project/1")
                 .principal(mockPrincipal)
-                .accept(MediaType.APPLICATION_JSON);
-
-        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-
-        MockHttpServletResponse response = result.getResponse();
+                .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         String expectedResult = "{\"id\":1,\"createAt\":1546300801000,\"updateAt\":1546300801000,\"projectName\":\"FAKE NAME\",\"projectIdentifier\":\"FAKE\",\"description\":\"FAKE description\",\"startDate\":\"31/12/2018\",\"endDate\":\"01/01/2019\",\"projectLeader\":\"LEADER\"}";
 
@@ -71,17 +91,13 @@ public class ProjectControllerTest {
 
     @Test
     public void getAllProjects() throws Exception {
-        Principal mockPrincipal = Mockito.mock(Principal.class);
-        Mockito.when(mockPrincipal.getName()).thenReturn("me");
         Mockito.when(projectService.findAllUserProjects(Mockito.anyString())).thenReturn(createProjects());
 
-        RequestBuilder requestBuilder = get("/api/project/all")
+        MockHttpServletResponse response = mockMvc.perform(get("/api/project/all")
                 .principal(mockPrincipal)
-                .accept(MediaType.APPLICATION_JSON);
-
-        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-
-        MockHttpServletResponse response = result.getResponse();
+                .accept(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse();
 
         String expectedResult = "[" +
                 "{\"id\":1,\"createAt\":1546300801000,\"updateAt\":1546300801000,\"projectName\":\"FAKE NAME\",\"projectIdentifier\":\"FAKE\",\"description\":\"FAKE description\",\"startDate\":\"31/12/2018\",\"endDate\":\"01/01/2019\",\"projectLeader\":\"LEADER\"}," +
@@ -93,10 +109,7 @@ public class ProjectControllerTest {
     }
 
     @Test
-    public void deleteProjectByIdentifier() throws Exception {
-        Principal mockPrincipal = Mockito.mock(Principal.class);
-        Mockito.when(mockPrincipal.getName()).thenReturn("me");
-
+    public void deleteProjectByIdentifier() {
         Mockito.doNothing().when(projectService).deleteUserProject(Mockito.anyString(), Mockito.any());
 
         projectService.deleteUserProject(Mockito.anyString(), Mockito.anyString());
@@ -111,7 +124,7 @@ public class ProjectControllerTest {
 
         Date NOW = sdf.parse("01/01/2019 00:00:01");
 
-        Project p1 = new Project().builder()
+        Project p1 = Project.builder()
                 .projectIdentifier("FAKE")
                 .description("FAKE description")
                 .projectName("FAKE NAME")
@@ -123,7 +136,7 @@ public class ProjectControllerTest {
         p1.setCreateAt(NOW);
         p1.setUpdateAt(NOW);
 
-        Project p2 = new Project().builder()
+        Project p2 = Project.builder()
                 .projectIdentifier("TEST")
                 .description("TEST description")
                 .projectName("TEST NAME")
