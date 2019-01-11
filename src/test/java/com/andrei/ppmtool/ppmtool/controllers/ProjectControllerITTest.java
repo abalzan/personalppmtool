@@ -7,11 +7,14 @@ import com.andrei.ppmtool.ppmtool.services.ValidationErrorService;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.security.Principal;
@@ -28,12 +31,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ProjectControllerTest extends BaseTestContext {
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class ProjectControllerITTest extends BaseTestContext {
 
-    @Mock
+    @MockBean
     private ProjectService projectService;
 
-    @Mock
+    @MockBean
     private ValidationErrorService validationErrorService;
 
     private ProjectController controller;
@@ -54,10 +59,6 @@ public class ProjectControllerTest extends BaseTestContext {
 
     @Test
     public void createNewProject() throws Exception {
-        Mockito.when(validationErrorService.validationErrorService(Mockito.any())).thenReturn(null);
-
-        Mockito.when(projectService.saveOrUpdate(Mockito.any(Project.class), Mockito.anyString())).thenReturn(createProjects().get(0));
-
         mockMvc.perform(post("/api/project")
                 .principal(mockPrincipal)
                 .accept(MediaType.APPLICATION_JSON)

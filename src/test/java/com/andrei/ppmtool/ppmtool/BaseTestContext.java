@@ -108,13 +108,13 @@ public abstract class BaseTestContext {
 
     private HttpHeaders createAuthenticationHeader() {
         HttpHeaders headers = new HttpHeaders();
-        headers.add(AUTH_HEADER_NAME, createBasicAuthToken(AUTH_USERNAME, AUTH_PASSWORD));
+        headers.add(AUTH_HEADER_NAME, createJWTAuthToken(AUTH_USERNAME, AUTH_PASSWORD));
         return headers;
     }
 
-    private String createBasicAuthToken(String username, String password) {
+    private String createJWTAuthToken(String username, String password) {
         String auth = String.join(":", username, password);
         byte[] encodedAuth = Base64.encodeBase64(auth.getBytes());
-        return "Basic " + new String(encodedAuth);
+        return "Bearer " + new String(encodedAuth);
     }
 }
