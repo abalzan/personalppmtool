@@ -8,6 +8,8 @@ import com.andrei.ppmtool.ppmtool.model.ProjectTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class ProjectTaskService {
@@ -47,7 +49,7 @@ public class ProjectTaskService {
         return projectTaskRepository.save(projectTask);
     }
 
-    public Iterable<ProjectTask> findBackLogById(String backlogId, String projectLeader) {
+    public List<ProjectTask> findBackLogById(String backlogId, String projectLeader) {
 
         projectService.findUserProjectIdentifier(backlogId, projectLeader);
 

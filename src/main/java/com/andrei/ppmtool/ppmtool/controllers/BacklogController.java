@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/backlog")
@@ -37,7 +38,7 @@ public class BacklogController {
     }
 
     @GetMapping("/{backlogId}")
-    public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlogId, Principal principal) {
+    public List<ProjectTask> getProjectBacklog(@PathVariable String backlogId, Principal principal) {
         return projectTaskService.findBackLogById(backlogId, principal.getName());
     }
 
