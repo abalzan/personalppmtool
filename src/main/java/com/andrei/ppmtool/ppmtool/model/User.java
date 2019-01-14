@@ -2,8 +2,7 @@ package com.andrei.ppmtool.ppmtool.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,6 +15,9 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class User extends BaseEntity implements UserDetails {
 
@@ -36,7 +38,6 @@ public class User extends BaseEntity implements UserDetails {
 
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
     private List<Project> projects = new ArrayList<>();
-
 
     @Override
     @JsonIgnore
